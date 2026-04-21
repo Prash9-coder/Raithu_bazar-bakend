@@ -84,6 +84,8 @@ WSGI_APPLICATION = 'cattle_market.wsgi.application'
 
 # Database
 # Defaulting to SQLite for easy setup if Postgres isn't configured, but with Postgres logic available
+import dj_database_url
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -91,7 +93,9 @@ DATABASES = {
     }
 }
 
-if os.getenv('DB_NAME'):
+if os.getenv('DATABASE_URL'):
+    DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
+elif os.getenv('DB_NAME'):
     DATABASES['default'] = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('DB_NAME'),
